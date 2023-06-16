@@ -1,7 +1,6 @@
 use axum::{routing::get, Router};
-use std::net::SocketAddr;
 
-use reddit_clone::{database::get_connection_pool, handlers::list_users};
+use reddit_clone::{database::get_connection_pool, get_serving_address, handlers::list_users};
 
 #[tokio::main]
 async fn main() {
@@ -10,9 +9,9 @@ async fn main() {
         .route("/users", get(list_users))
         .with_state(connection_pool);
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-    tracing::debug!("listening on {}", addr);
-    axum::Server::bind(&addr)
+    let address = get_serving_address();
+    tracing::debug!("listening on {}", address);
+    axum::Server::bind(&address)
         .serve(app.into_make_service())
         .await
         .unwrap();
