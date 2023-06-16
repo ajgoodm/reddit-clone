@@ -1,0 +1,15 @@
+version: '3'
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    restart: always
+    volumes:
+      - /tmp/pg_data/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: reddit_clone_app
+      POSTGRES_PASSWORD: password
+      POSTGRES_MULTIPLE_DATABASES: reddit_clone
+    ports:
+      - 5437:5432
