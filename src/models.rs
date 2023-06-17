@@ -9,3 +9,9 @@ pub struct User {
     name: String,
     created_at: DateTime<Utc>,
 }
+
+#[derive(serde::Deserialize, Insertable)]
+#[diesel(table_name = users)]
+pub struct NewUser {
+    name: String,
+}
