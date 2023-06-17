@@ -1,4 +1,4 @@
-use axum::{http::StatusCode, response::Json};
+use axum::{extract::Path, http::StatusCode, response::Json};
 use diesel::prelude::*;
 use diesel_async::RunQueryDsl;
 
@@ -9,12 +9,14 @@ use crate::{
     utils::internal_error,
 };
 
-pub async fn list_users(
+pub async fn get_user(
     DatabaseConnection(mut conn): DatabaseConnection,
-) -> Result<Json<Vec<User>>, (StatusCode, String)> {
+    Path(user_id): Path<i32>,
+) -> Result<Json<User>, (StatusCode, String)> {
     let result = users::table
         .select(User::as_select())
-        .load(&mut conn)
+        .filter(users::id.eq(user_id))
+        .first(&mut conn)
         .await
         .map_err(internal_error)?;
     Ok(Json(result))
